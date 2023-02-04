@@ -19,4 +19,4 @@ def speak(polly, text, format="mp3", voice="Brian"):
 
 
 polly = connectToPolly()
-speak(polly, "Hello world, I'm Polly. Or Brian. Or anyone you want, really.")
+speak(polly, "Hello world! This is the bot. I am speaking to you.")
