@@ -4,9 +4,10 @@ import base64
 import json
 import asyncio
 from random import randint
-from configure import auth_key
+from api_keys import auth_key
 
 from speaker import speakLive
+
 
 stock_responses = [
     "That's so interesting!",
