@@ -1,2 +1,1 @@
-# torpedo-go-client
 # charizzma
