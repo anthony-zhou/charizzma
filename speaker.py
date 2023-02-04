@@ -18,5 +18,6 @@ def speak(polly, text, format="mp3", voice="Brian"):
     os.remove("/tmp/sound.mp3")
 
 
-polly = connectToPolly()
-speak(polly, "Hello world! This is the bot. I am speaking to you.")
+def speakLive(text):
+    polly = connectToPolly()
+    speak(polly, text)
