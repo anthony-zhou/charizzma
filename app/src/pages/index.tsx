@@ -1,10 +1,36 @@
 import Head from "next/head";
 import Image from "next/image";
-import { Inter } from "@next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import { useAuthState } from "react-firebase-hooks/auth";
+import firebase from "@/lib/firebase/clientApp";
+import Link from "next/link";
 
 export default function Home() {
+  const [user, loading] = useAuthState(firebase.auth);
+
+  if (loading) {
+    return <></>;
+  } else if (!user) {
+    return (
+      // <Layout>
+      <div className="container mx-auto pt-6 pb-28 md:px-36 px-6">
+        <h1 className="text-5xl">up your conversation game</h1>
+        <div className="pt-10">
+          Please{" "}
+          <Link href="/auth/signin" className="underline">
+            sign in
+          </Link>{" "}
+          to start using Charisma.{" "}
+        </div>
+      </div>
+      // </Layout>
+    );
+  }
+
+  const startConversation = () => {
+    // TODO: start conversation
+    alert("Start conversation");
+  };
+
   return (
     <>
       <Head>
@@ -13,7 +39,17 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1> Charisma </h1>
+      <div className="container mx-auto pt-6 pb-28 md:px-36 px-6">
+        <h1 className="text-5xl">up your conversation game</h1>
+        <div className="pt-10">
+          <button
+            className="button primary text-2xl text-blue-700"
+            onClick={startConversation}
+          >
+            Start conversation
+          </button>
+        </div>
+      </div>
     </>
   );
 }
