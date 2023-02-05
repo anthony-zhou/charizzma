@@ -4,9 +4,11 @@ import base64
 import json
 import asyncio
 from random import randint
+from api_keys import assemblyai_api_key
+from gptInterface import request_api
 import functools
 
-from api_keys import assembly_ai_api_key
+
 from speaker import speakLive
 
 
@@ -42,7 +44,7 @@ async def send_receive():
     print(f"Connecting websocket to url ${URL}")
     async with websockets.connect(
         URL,
-        extra_headers=(("Authorization", assembly_ai_api_key),),
+        extra_headers=(("Authorization", assemblyai_api_key),),
         ping_interval=5,
         ping_timeout=20,
     ) as _ws:
@@ -112,9 +114,9 @@ async def send_receive():
                             text = segments[len(segments) - 2]
                             response = request_api(text, "answer_question", None)
 
-                        if "interesting" in transcript_lowercase:
+                        if "interesting interesting" in transcript_lowercase:
                             segments = full_transcript.lower().split("interesting")
-                            text = segments[len(segments) - 2]
+                            text = segments[len(segments) - 3]
                             response = request_api(text, "continue_conversation", None)
 
                         # TODO: handle "I wonder if" case. (answer_question)
@@ -153,7 +155,7 @@ async def send_receive():
                                     .split("what should i know")[0]
                                 )
                                 response = request_api(
-                                    text, "meeting_prep", "generate_knowledge"
+                                    text, "meeting_prep", "generate_context"
                                 )
                                 # Mark that we've completed this request.
                                 index_of_charisma = -1
