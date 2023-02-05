@@ -1,7 +1,7 @@
 import openai
-import api_keys
+from api_keys import OPEN_AI_API_KEY
 
-openai.api_key = api_keys.openai_api_key
+openai.api_key = OPEN_AI_API_KEY
 
 PROMPTS = {
     "continue_conversation": "You are a charismatic conversation assistant. I am speaking with a friend and I will give you our conversation history below. Please give me a good one or two sentence response that will continue the conversation.",

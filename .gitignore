@@ -1,4 +1,5 @@
 .vscode
 venv
 api_keys.py
+firebaseAdmin.json
 __pycache__
