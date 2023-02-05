@@ -4,11 +4,9 @@ import base64
 import json
 import asyncio
 from random import randint
-from api_keys import auth_key
-from gptInterface import request_api
 import functools
 
-
+from api_keys import assembly_ai_api_key
 from speaker import speakLive
 
 
@@ -44,7 +42,7 @@ async def send_receive():
     print(f"Connecting websocket to url ${URL}")
     async with websockets.connect(
         URL,
-        extra_headers=(("Authorization", auth_key),),
+        extra_headers=(("Authorization", assembly_ai_api_key),),
         ping_interval=5,
         ping_timeout=20,
     ) as _ws:

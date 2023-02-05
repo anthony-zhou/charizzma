@@ -6,5 +6,7 @@ RUN pip install openai
 RUN apt install gcc -y
 RUN apt install pulseaudio -y
 RUN apt-get install portaudio19-dev -y
+RUN pip install websockets
+RUN pip install boto3
 RUN pip install pyaudio
 # add install open api
