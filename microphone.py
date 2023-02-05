@@ -110,11 +110,13 @@ async def send_receive():
                             # now we're just waiting for the next cue.
 
                         if "let me think" in transcript_lowercase:
-                            text = full_transcript.lower().split("let me think")[0]
+                            segments = full_transcript.lower().split("let me think")
+                            text = segments[len(segments) - 2]
                             response = request_api(text, "answer_question", None)
 
                         if "interesting" in transcript_lowercase:
-                            text = full_transcript.lower().split("interesting")[0]
+                            segments = full_transcript.lower().split("interesting")
+                            text = segments[len(segments) - 2]
                             response = request_api(text, "continue_conversation", None)
 
                         # TODO: handle "I wonder if" case. (answer_question)

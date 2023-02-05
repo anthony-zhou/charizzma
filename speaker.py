@@ -9,7 +9,8 @@ def connectToPolly(regionName=defaultRegion, endpointUrl=defaultUrl):
 
 
 def speak(polly, text, format="mp3", voice="Brian"):
-    resp = polly.synthesize_speech(OutputFormat=format, Text=text, VoiceId=voice)
+    text = f"<speak><prosody rate=\"fast\">{text}</prosody></speak>"
+    resp = polly.synthesize_speech(OutputFormat=format, Text=text, VoiceId=voice, TextType="ssml")
     soundfile = open("/tmp/sound.mp3", "wb")
     soundBytes = resp["AudioStream"].read()
     soundfile.write(soundBytes)
