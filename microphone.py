@@ -5,6 +5,9 @@ import json
 import asyncio
 from random import randint
 from api_keys import auth_key
+from gptInterface import request_api
+import functools
+
 
 from speaker import speakLive
 
@@ -67,19 +70,96 @@ async def send_receive():
                 await asyncio.sleep(0.01)
 
             return True
-
+        
+        
+        
         async def receive():
+            full_transcript = ""  # A state variable to keep track of the full transcript
+            
+            index_of_charisma = -1 # A state variable to keep track of the index of the last "help me charisma" cue
             while True:
                 try:
                     result_str = await _ws.recv()
                     result_json = json.loads(result_str)
                     if result_json["message_type"] == "FinalTranscript":
-                        text = json.loads(result_str)["text"]
-                        print(text)
-                        if "Lemme think" in text or "Let me think" in text:
-                            response = stock_responses[
-                                randint(0, len(stock_responses) - 1)
-                            ]
+                        transcript = json.loads(result_str)["text"]
+                        transcript_lowercase = (
+                            transcript.lower()
+                            .replace("?", "")
+                            .replace(".", "")
+                            .replace("!", "")
+                            .replace(",", "")
+                        ) + " " # Add a space so "in" works
+                        response = None
+
+                        print(f"Transcript: {transcript}")
+                        print(transcript_lowercase)
+                        print(index_of_charisma)
+
+                        full_transcript += transcript + " "
+
+                        if (
+                            "help me charisma" in transcript_lowercase
+                            or "help me charisma" == transcript_lowercase
+                        ):
+                            print(full_transcript)
+                            index_of_charisma = full_transcript.lower().index(
+                                "charisma"
+                            ) + len("charisma")
+                            print("index_of_charisma: ", index_of_charisma)
+                            # now we're just waiting for the next cue.
+
+                        if "let me think" in transcript_lowercase:
+                            text = full_transcript.lower().split("let me think")[0]
+                            response = request_api(text, "answer_question", None)
+
+                        if "interesting" in transcript_lowercase:
+                            text = full_transcript.lower().split("interesting")[0]
+                            response = request_api(text, "continue_conversation", None)
+
+                        # TODO: handle "I wonder if" case. (answer_question)
+
+                        if index_of_charisma != -1:
+                            # we have seen the charisma cue before
+                            if "what should i ask" in transcript_lowercase:
+                                text = (
+                                    full_transcript[index_of_charisma:]
+                                    .lower()
+                                    .split("what should i ask")[0]
+                                )
+                                response = request_api(
+                                    text, "meeting_prep", "generate_questions"
+                                )
+                                # Mark that we've completed this request.
+                                index_of_charisma = -1
+                            elif (
+                                "what topics should i talk about"
+                                in transcript_lowercase
+                            ):
+                                text = (
+                                    full_transcript[index_of_charisma:]
+                                    .lower()
+                                    .split("what topics should i talk about")[0]
+                                )
+                                response = request_api(
+                                    text, "meeting_prep", "generate_topics"
+                                )
+                                # Mark that we've completed this request.
+                                index_of_charisma = -1
+                            elif "what should i know" in transcript_lowercase:
+                                text = (
+                                    full_transcript[index_of_charisma:]
+                                    .lower()
+                                    .split("what should i know")[0]
+                                )
+                                response = request_api(
+                                    text, "meeting_prep", "generate_knowledge"
+                                )
+                                # Mark that we've completed this request.
+                                index_of_charisma = -1
+
+                            
+                        if response:
                             speakLive(response)
 
                 except websockets.exceptions.ConnectionClosedError as e:
